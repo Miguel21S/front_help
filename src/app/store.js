@@ -11,12 +11,12 @@ const rootReducer = combineReducers({
 
 })
 
-const persistcnfig = {
+const persistconfig = {
     key: 'root',
     storage
 }
 
-const persistedReducer = persisteReducer(persistcnfig, rootReducer);
+const persistedReducer = persisteReducer(persistconfig, rootReducer);
 
 const store = configureStore({
     reducer: persistedReducer,
