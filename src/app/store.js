@@ -1,12 +1,13 @@
-import { persisteReducer, persistStore } from "redux-persist"
+import { persistReducer, persistStore } from "redux-persist";
 import { combineReducers } from "redux";
-import { userSlice } from "./slices/userSlice";
-import { profileReducer } from "./slices/profileSlice";
-import storage from "redux-persist/lib/storage"
 import { configureStore } from "@reduxjs/toolkit";
 
+import userReducer from "./slices/userSlice";
+import profileReducer from "./slices/profileSlice";
+import storage from "redux-persist/es/storage"
+
 const rootReducer = combineReducers({
-    user: userSlice,
+    user: userReducer,
     profile: profileReducer
 
 })
@@ -15,8 +16,9 @@ const persistconfig = {
     key: 'root',
     storage
 }
+console.log("STORAGE:", storage);
 
-const persistedReducer = persisteReducer(persistconfig, rootReducer);
+const persistedReducer = persistReducer(persistconfig, rootReducer);
 
 const store = configureStore({
     reducer: persistedReducer,
@@ -24,6 +26,5 @@ const store = configureStore({
         serializableCheck: false
     })
 })
-
 export const persitor = persistStore(store);
 export default store;
