@@ -27,3 +27,30 @@ export const rootLogin = async(user) => {
     
     }
 }
+
+export const rootRegister = async (user)=>{
+     const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Authorization': `Bearer ${user}`
+        },
+        body: JSON.stringify(user),
+    }
+
+    try {
+        const response = await fetch(`${root}auth/register`, options);
+        console.log("Response status:", response);
+        const data = await response.json();
+        
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+        console.log("Data status:", data);
+        return data;
+    } catch (error) {
+        console.error("Error in RegistroUser:", error.message);
+        throw error;
+
+    }
+}
