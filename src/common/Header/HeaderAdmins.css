@@ -1,0 +1,124 @@
+.header>p {
+    color: rgb(10, 10, 10);
+}
+
+.headerDesign {
+    background-color: #48efa1;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    box-shadow: -7px 8px 8px rgb(66, 47, 60);
+    border-radius: 4px;
+    color: rgb(3, 2, 2);
+    z-index: 1;
+    position: relative;
+}
+
+.color-btn-dropdown {
+    color: black;
+}
+
+.form-control {
+    width: 35cap;
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    /* overflow: hidden; TENGO QUE VERLO */
+    background-color: #333;
+    z-index: 1000;
+}
+
+.btn-submit {
+    width: 20%;
+}
+
+
+.item-logoutCount {
+    color: rgb(246, 37, 37);
+    margin-left: 5px;
+    width: 0.1cm;
+    height: 0.7cm;
+    border-radius: 10cap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-name, 
+.item-gestion,
+.item-gestion:hover,
+.item-gestion:focus,
+.item-gestion:active,
+.item-profile:focus,
+.item-profile:active,
+.item-profile:hover {
+  box-shadow: none !important;
+  outline: none !important;
+  border: none !important;
+  background-color: transparent !important;
+  transform: none !important;   /* 🔥 elimina la animación de encogerse */
+  transition: none !important;  /* 🔥 elimina la animación de cambio */
+}
+
+/* .links-profile:hover, 
+.links-profile:active,
+.links-profile:focus{
+  background-color: transparent !important;
+
+} */
+
+.input-search {
+    width: 60ch;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-search {
+    height: 47px;
+}
+
+.item-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-news,
+.item-report,
+.item-gestion {
+    display: flex;
+    align-items: center;
+    margin-left: 17px;
+}
+
+/* Hover submenu support */
+.hover-dropdown:hover>.dropdown-menu {
+    display: block;
+    margin-top: 0;
+    left: 100%;
+    top: 0;
+    visibility: visible;
+}
+
+/* .dropdown-menu:focus{
+    background-color: none !important;
+} */
+
+.item-drop {
+    width: 600px;
+}
+
+.navbar-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapse {
+    display: flex;
+    justify-content: center;
+}
