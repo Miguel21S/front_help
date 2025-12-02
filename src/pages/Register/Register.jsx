@@ -16,6 +16,7 @@ const passwordRules = {
     length: /.{8,}/
 };
 
+///////////////////   Esquema de validación con Yup
 const validationSchema = Yup.object({
     name: Yup.string()
         .min(3, "Debe tener al menos 3 caracteres")

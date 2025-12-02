@@ -14,6 +14,8 @@ export const Login = () => {
     const dispatch = useDispatch()
 
     const [errorMessage, setErrorMessage] = useState();
+    const [showPassword, setShowPassword] = useState(false);
+    // const [passwordStrength, setPasswordStrength] = useState(null);
 
     const [credentialsUser, setCredentialsUser] = useState({
         email: "",
@@ -23,7 +25,7 @@ export const Login = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const inputHeadler = (e) => {
-        const {name, value} = e.target
+        const { name, value } = e.target
         setCredentialsUser(prevState => ({
             ...prevState,
             [name]: value
@@ -114,12 +116,20 @@ export const Login = () => {
                         <input
                             className='form-control'
                             name="password"
-                            type='password'
+                            type={showPassword ? "text" : "password"}
                             placeholder='Password'
                             value={credentialsUser.password || ""}
-                            onChange={inputHeadler}
+                            onChange={
+                                inputHeadler
+                              }
                         />
-
+                        <button
+                            type="button"
+                            style={{ marginLeft: "6px" }}
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <i className="bi bi-eye-slash"></i> : <i className="bi bi-eye"></i>}
+                        </button>
                         {errorMessage && <div className="alert alert-danger ">{errorMessage}</div>}
 
                         <button
