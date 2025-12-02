@@ -1,0 +1,26 @@
+.designCLink  {
+    font-weight: bold;
+    margin: 1em;
+    transition: 0.3s;
+}
+
+.designCLink :hover {
+    transition: 0.3s;
+    /* color: black; */
+    cursor: pointer;
+}
+
+.c-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.c-link:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 30px;
+  color: black;
+}

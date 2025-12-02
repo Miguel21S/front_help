@@ -1,19 +1,16 @@
 import { useEffect } from "react";
-import { CLink } from "../CLink/CLink";
 import { Dropdown } from "bootstrap";
+import { CLink } from "../CLink/CLink";
 
 export const HeaderSuperAdmin = () => {
-
     useEffect(() => {
-        // SELECCIONA TODOS LOS TOGGLES DE DROPDOWN
         const dropdownToggles = document.querySelectorAll('[data-bs-toggle="dropdown"]');
 
         dropdownToggles.forEach((toggle) => {
-            // INICIALIZAR DROPDOWN CON POPPER PERSONALIZADO
             new Dropdown(toggle, {
-                popperConfig: (defaultBsPopperConfig) => {
-                    defaultBsPopperConfig.placement = "bottom-start"; // ubicación por defecto
-                    defaultBsPopperConfig.modifiers = [
+                popperConfig: (defaultConfig) => {
+                    defaultConfig.placement = "bottom-start";
+                    defaultConfig.modifiers = [
                         {
                             name: "flip",
                             options: {
@@ -21,75 +18,72 @@ export const HeaderSuperAdmin = () => {
                             },
                         },
                     ];
-                    return defaultBsPopperConfig;
+                    return defaultConfig;
                 },
             });
         });
     }, []);
 
     return (
-        <>
-            <div className="menu-superadmin">
-                <ul className="navbar-nav">
-                    <li>
-                        <CLink path="/dashboardSuperAdmin" title="Dashboard" />
-                    </li>
+        <div className="menu-superadmin">
+            <ul className="navbar-nav">
 
-                    <div className="btn-group">
-                        <button type="button" className="nav-link dropdown-toggle color-btn-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span> </span>
-                        </button>
-                        <ul className="dropdown-menu">
-                            
-                        </ul>
-                    </div>
+                <li className="nav-item">
+                    <CLink path="/dashboardSuperAdmin" title="Dashboard" />
+                </li>
 
-                    <div className="btn-group">
-                        <button type="button" className="nav-link dropdown-toggle color-btn-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <span>  </span>
-                        </button>
-                        <ul className="dropdown-menu">
-                            <li className="dropdown-item">
-                                
-                            </li>
-                            <li>
-                                <hr className="dropdown-divider" />
-                            </li>
-                            <li>
-                                <a className="dropdown-item item-gestion" href="#">Another action</a>
-                            </li>
-                        </ul>
-                    </div>
+                <li className="nav-item dropdown">
+                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                            data-bs-toggle="dropdown">
+                        Gestión de donaciones
+                    </button>
+                    <ul className="dropdown-menu">
+                        <li><CLink className="dropdown-item" path="/#" title="donaciones" /></li>
+                        <li><CLink className="dropdown-item" path="/#" title="Asociarlas con solicitudes" /></li>
+                    </ul>
+                </li>
 
-                    <div className="dropdown">
-                        <button
-                            type="button"
-                            className="btn nav-link dropdown-toggle color-btn-dropdown"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                        >
-                            
-                        </button>
-                        <div className="dropdown-menu p-3 item-drop">
-                            <div className="container">
-                                <div className="row">
-                                    <div className="col">
-                                        
-                                    </div>
-                                    <div className="col">
-                                        
-                                    </div>
-                                    <div className="col">
-                                        
-                                    </div>
-                                </div>
+                <li className="nav-item dropdown">
+                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                            data-bs-toggle="dropdown">
+                        Gestión de Contenido
+                    </button>
+                    <ul className="dropdown-menu">
+                        <li><CLink className="dropdown-item" path="/" title="Solicitudes" /></li>
+                        <li><hr className="dropdown-divider" /></li>
+                        <li><a className="dropdown-item" href="#">Otra acción</a></li>
+                    </ul>
+                </li>
+
+                <li className="nav-item dropdown">
+                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                            data-bs-toggle="dropdown">
+                        Gestión de Bienes
+                    </button>
+
+                    <div className="dropdown-menu p-3 item-drop">
+                        <div className="row">
+                            <div className="col">
+                                <CLink className="dropdown-item" path="/usersmanager" title="Usuarios" />
+                                <CLink className="dropdown-item" path="/buildingsmanager" title="Edificios" />
+                                <CLink className="dropdown-item" path="/newsmanager" title="Noticias" />
                             </div>
-                            <hr className="dropdown-divider" />
-                            <a className="dropdown-item" href="#">Otra acción</a>
+                            <div className="col">
+                                <CLink className="dropdown-item" path="/diseasesmanager" title="Enfermedades" />
+                                <CLink className="dropdown-item" path="/housingmanager" title="Viviendas" />
+                            </div>
+                            <div className="col">
+                                <CLink className="dropdown-item" path="/mascotsmanager" title="Mascotas" />
+                                <CLink className="dropdown-item" path="/carsmanager" title="Coches" />
+                            </div>
                         </div>
+
+                        <hr className="dropdown-divider" />
+                        <a className="dropdown-item" href="#">Otra acción</a>
                     </div>
-                </ul>
-            </div>
-        </>
-    )
-}
+                </li>
+
+            </ul>
+        </div>
+    );
+};
