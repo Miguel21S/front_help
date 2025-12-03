@@ -10,7 +10,7 @@ export const HeaderMenus = () => (
             <div className="dropdown">
                 <button
                     type="button"
-                    className="btn nav-link dropdown-toggle color-btn-dropdown"
+                    className="c-link btn nav-link dropdown-toggle color-btn-dropdown"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                 >

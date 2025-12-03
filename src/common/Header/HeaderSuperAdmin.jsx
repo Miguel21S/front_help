@@ -33,7 +33,7 @@ export const HeaderSuperAdmin = () => {
                 </li>
 
                 <li className="nav-item dropdown">
-                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                    <button className="c-link nav-link dropdown-toggle color-btn-dropdown"
                             data-bs-toggle="dropdown">
                         Gestión de donaciones
                     </button>
@@ -44,7 +44,7 @@ export const HeaderSuperAdmin = () => {
                 </li>
 
                 <li className="nav-item dropdown">
-                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                    <button className="c-link nav-link dropdown-toggle color-btn-dropdown"
                             data-bs-toggle="dropdown">
                         Gestión de Contenido
                     </button>
@@ -56,7 +56,7 @@ export const HeaderSuperAdmin = () => {
                 </li>
 
                 <li className="nav-item dropdown">
-                    <button className="nav-link dropdown-toggle color-btn-dropdown"
+                    <button className="c-link nav-link dropdown-toggle color-btn-dropdown"
                             data-bs-toggle="dropdown">
                         Gestión de Bienes
                     </button>

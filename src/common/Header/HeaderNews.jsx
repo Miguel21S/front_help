@@ -3,7 +3,7 @@ import { CLink } from "../CLink/CLink";
 export const HeaderNews = () => (
     <div className="navbar-nav">
         <div className="btn-group">
-            <button type="button" className="item-gestion btn dropdown-toggle color-btn-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <button type="button" className="c-link item-gestion btn dropdown-toggle color-btn-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <span> Noticias </span>
             </button>
             <ul className="dropdown-menu">

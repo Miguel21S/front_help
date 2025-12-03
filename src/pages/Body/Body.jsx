@@ -3,7 +3,7 @@ import { Login } from "../Login/Login"
 import { DashboardSuperAdmin } from "../DashboardSuperAdmin/DashboardSuperAdmin"
 import { Register } from "../Register/Register"
 import { Home } from "../Home/Home"
-// import { HeaderAdmins } from "../../common/Header/HeaderAdmins"
+
 export const Body = () =>{
     return(
         <Routes>

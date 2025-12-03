@@ -5,7 +5,7 @@ export const HeaderReportes = () => (
             <div className="btn-group">
                 <button
                     type="button"
-                    className="nav-link dropdown-toggle color-btn-dropdown"
+                    className="c-link nav-link dropdown-toggle color-btn-dropdown"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                 >

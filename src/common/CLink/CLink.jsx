@@ -10,13 +10,14 @@ export const CLink = ({ path = "#", title, target, className = "" }) => {
         e.preventDefault();
         navigate(path);
     };
-    return target === "_blank" ? (
-        <a href={path} target="_blank" rel="noopener noreferrer" className={`c-link ${className}`}>
-            {title}
-        </a>
-    ) : (
-        <a href={path} onClick={handleNavigation} className={`c-link ${className}`}>
-            {title}
-        </a>
-    );
+    return target === "_blank" ?
+        (
+            <a href={path} target="_blank" rel="noopener noreferrer" className={`c-link ${className}`}>
+                {title}
+            </a>
+        ) : (
+            <a href={path} onClick={handleNavigation} className={`c-link ${className}`}>
+                {title}
+            </a>
+        );
 }

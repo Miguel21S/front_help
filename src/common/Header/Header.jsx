@@ -5,7 +5,6 @@ import { HeaderMenus } from "./HeaderMenus";
 import { HeaderLoginRegister } from "./HeaderLoginRegister";
 import { userData } from "../../app/slices/userSlice";
 import { HeaderNews } from "./HeaderNews";
-import { HeaderSuperAdmin } from './HeaderSuperAdmin';
 
 export const Header = () => {
     const token = useSelector(userData).credentials.token || null;
