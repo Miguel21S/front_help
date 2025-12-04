@@ -1,0 +1,70 @@
+
+/* Start component input and textArea BOOTSTRAPS */
+.form-control {
+  position: relative;
+  z-index: auto;
+  height: 50px;
+  font-size: 16px;
+  padding: 10px;
+
+}
+/* End component input and textArea BOOTSTRAPS  */
+
+/* Start component selector BOOTSTRAPS  */
+.selector-design {
+  height: 50px;
+  padding: 7px;
+  border-radius: 0.6cap;
+  border: 1px solid #ccc;
+}
+select:hover,
+input:hover {
+  background-color: #f0f0f0;
+  transition: background-color 0.3s ease;
+  border: 1px solid rgb(127, 186, 220);
+  transition: border-color 0.3s ease;
+}
+/* End component selector BOOTSTRAPS  */
+
+/* Start component table */
+.table-responsive{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-complet {
+    width: 100%;
+    border-collapse: collapse;
+}
+.table-complet th,
+.table-complet td {
+    text-align: left;
+    padding: 8px;
+}
+
+.table-Input {
+    height: 30px;
+    width: 110px;
+    border-radius: 0%;
+
+    color: black;
+    background-color: aliceblue;
+    transition: all 0.3s ease-in-out;
+}
+
+.table-Input:hover {
+    background-color: #dbd5d5;
+    width: 200px;
+}
+
+.table-Input:focus {
+    color: black;
+    width: 200px;
+    border: 4px solid #217c39;
+    background-color: rgb(255, 255, 255);
+}
+
+.renderActionsBTN{
+    width: 6%;
+}
+/* End component table */
