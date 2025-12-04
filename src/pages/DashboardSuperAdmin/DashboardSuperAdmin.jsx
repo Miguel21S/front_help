@@ -49,7 +49,7 @@ export const DashboardSuperAdmin = () => {
         if (!isPermisionRoled && !token) return;
         const fetchDashboard = async () => {
             try {
-                const dashboardDatas = await dashboard.DashboardService(token)
+                const dashboardDatas = await dashboard.rootDashboard(token)
                 const data = dashboardDatas.data;
                 setDashboardData(data);
 

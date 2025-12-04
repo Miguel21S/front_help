@@ -1,6 +1,6 @@
 const root = 'http://localhost:2025/api/';
 
-export const DashboardService = async(token) =>{
+export const rootDashboard = async(token) =>{
     try {
         const response = await fetch(`${root}users/auth/dashboard/users`, {
             method: 'GET',
