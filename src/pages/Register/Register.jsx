@@ -82,8 +82,6 @@ export const Register = () => {
         validateOnBlur: true,
 
         onSubmit: async (values) => {
-            console.log("SUBMIT DISPARADO");
-            console.log("Valores enviados:", values);
             try {
 
                 if (!navigator.onLine) {
@@ -92,7 +90,6 @@ export const Register = () => {
                 }
 
                 const userRegister = await auth.rootRegister(values);
-                console.log("User Register Response:", userRegister);
                 if (userRegister.success) {
                     setTimeout(() => {
                         navigate("/login")
