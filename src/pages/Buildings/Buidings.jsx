@@ -13,6 +13,7 @@ export const Buildings = () => {
     const token = useSelector(userData).credentials.token || null
 
     const [listBuildings, setListBuildings] = useState([])
+    const [editedData, setEditedData] = useState([])
 
     let decodificado = null;
     let isPermisionRoled = false;
@@ -34,7 +35,24 @@ export const Buildings = () => {
         }
     }, [token, isPermisionRoled, navigate])
 
-   
+    const [page, setPage] = useState(1);
+    const [rowsPage] = useState(10);
+    const maxPageNumbers = 10;
+
+    const handlerChangePage = (e) => {
+        setPage(e)
+    }
+    //////////////////////     State for input
+    // const handleInput = (e) => {
+    //     const { name, value } = e.target;
+    //     setEditedData(prevStat => ({
+    //         ...prevStat,
+    //         [__a]: {
+    //             prevStat(__a),
+    //             [name]: value,
+    //         }
+    //     }))
+    // }
 
     //////////////////////     List buiding
     useEffect(() => {
@@ -57,6 +75,16 @@ export const Buildings = () => {
 
     }, [token, isPermisionRoled])
 
+    const paginatedData = listBuildings.slice(
+        (page - 1) * rowsPage,
+        (page - 1) * rowsPage + rowsPage
+    )
+
+    const totalPages = Math.ceil(listBuildings.length / rowsPage);
+    const currentBlock = Math.ceil(page / maxPageNumbers);
+    const startPage = (currentBlock - 1) / maxPageNumbers + 1;
+    const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages)
+
     //////////////////////     Title table
     const columns = [
         { header: "ID", accessor: "id" },
@@ -78,7 +106,7 @@ export const Buildings = () => {
 
                 {/* element table */}
                 <CTableNormal columns={columns}
-                    data={listBuildings}
+                    data={paginatedData}
                     editRowId={""}
                     editedData={""}
                     handleInputChange={""}
@@ -119,6 +147,44 @@ export const Buildings = () => {
                         </div>
                     )}
                 />
+            </div>
+            <div className="content-pagination-building">
+                <nav>
+                    <ul className='pagination justify-content-center mt-3'>
+                        <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                            <button className='page-link' onClick={() => handlerChangePage(1)}>
+                                «
+                            </button>
+                        </li>
+                        <li className={`page-item ${page === 1 ? "disabled" : ""}`}>
+                            <button className='page-link' onClick={() => handlerChangePage(page - 1)}>
+                                ‹
+                            </button>
+                        </li>
+
+                        {[...Array(endPage - startPage + 1)].map((_, index) => {
+                            const pageNumber = startPage + index;
+                            return (
+                                <li key={pageNumber} className={`page-item ${page === pageNumber ? "active" : ""}`}>
+                                    <button className="page-link" onClick={() => handlerChangePage(pageNumber)}>
+                                        {pageNumber}
+                                    </button>
+                                </li>
+                            );
+                        })}
+
+                        <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                            <button className="page-link" onClick={() => handlerChangePage(page + 1)}>
+                                ›
+                            </button>
+                        </li>
+                        <li className={`page-item ${page === totalPages ? "disabled" : ""}`}>
+                            <button className="page-link" onClick={() => handlerChangePage(totalPages)}>
+                                »
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </>
     )
