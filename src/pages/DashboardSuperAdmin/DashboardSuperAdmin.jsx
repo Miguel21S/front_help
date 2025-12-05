@@ -20,9 +20,6 @@ export const DashboardSuperAdmin = () => {
     const [usersAgeGenderData, setUsersAgeGenderData] = useState([]);
     const [usersNationalityData, setUsersNationalityData] = useState([]);
 
-    const [dashboardData, setDashboardData] = useState(null);
-
-
     let decodificado = null;
     let isPermisionRoled = false;
 
@@ -44,6 +41,7 @@ export const DashboardSuperAdmin = () => {
     }, [token, isPermisionRoled, navigate])
 
 
+    //////////////////////     DashBoard users
     useEffect(() => {
 
         if (!isPermisionRoled && !token) return;
@@ -51,7 +49,6 @@ export const DashboardSuperAdmin = () => {
             try {
                 const dashboardDatas = await dashboard.rootDashboard(token)
                 const data = dashboardDatas.data;
-                setDashboardData(data);
 
                 setTotalUsers(data.totalUsersSystem);
                 setGenderData(data.userGenderCount);
@@ -69,16 +66,12 @@ export const DashboardSuperAdmin = () => {
         }
     }, [token, isPermisionRoled]);
 
-    // const gender = [
-    //     { name: 'Hombre', value: 300 },
-    //     { name: 'Mujer', value: 200 },
-    // ];
-
+    //////////////////////     Function generate color
     const randomColor = (index) => `hsl(${index * 50}, 70%, 50%)`;
     const generateColors = (length) =>
         Array.from({ length }, (_, i) => randomColor(i));
 
-
+    //////////////////////     Group of users for age
     const ageGroupChart = {
         labels: ageGroupData?.map(item => item.group_age) || [],
         datasets: [
@@ -90,6 +83,7 @@ export const DashboardSuperAdmin = () => {
         ]
     };
 
+    //////////////////////     Users forGender
     const genderChart = {
         labels: genderData.map(item => item.gender) || [],
         datasets: [
@@ -101,6 +95,7 @@ export const DashboardSuperAdmin = () => {
         ]
     };
 
+    //////////////////////     Users for age
     const ageDataChart = {
         labels: ageData?.map(item => item.age) || [],
         datasets: [
@@ -112,6 +107,7 @@ export const DashboardSuperAdmin = () => {
         ]
     }
 
+    //////////////////////     Users for roles
     const roleDataChart = {
         labels: usersForRolData?.map(item => item.roleName) || [],
         datasets: [
@@ -123,6 +119,7 @@ export const DashboardSuperAdmin = () => {
         ]
     }
 
+    //////////////////////     Users for nationality
     const nationalityDataChart = {
         labels: usersNationalityData?.map(item => item.nationality) || [],
         datasets: [
@@ -134,6 +131,7 @@ export const DashboardSuperAdmin = () => {
         ]
     }
 
+    //////////////////////     Users for age and genders
     const ageGroups = [...new Set(usersAgeGenderData?.map(i => i.group_age))];
     const genders = [...new Set(usersAgeGenderData?.map(i => i.gender))];
     const genderColors = generateColors(genders.length);
@@ -155,6 +153,7 @@ export const DashboardSuperAdmin = () => {
         datasets: datasets
     };
 
+    //////////////////////     Style for graphic
     const options = {
         responsive: true,
         plugins: {
@@ -175,6 +174,7 @@ export const DashboardSuperAdmin = () => {
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '20rem' }}>
                             <div style={{ width: "300px", }}>
+                                {/* Call roup of users for age  in graphic */}
                                 <BarChartComponent data={ageGroupChart} />
                             </div>
                         </div>
@@ -183,6 +183,7 @@ export const DashboardSuperAdmin = () => {
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '20rem' }}>
                             <div style={{ width: "300px" }}>
+                                {/* Call users for gender in graphic */}
                                 <DoughnutChartComponent data={genderChart} />
                             </div>
                         </div>
@@ -190,6 +191,7 @@ export const DashboardSuperAdmin = () => {
 
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '20rem' }}>
+                            {/* Call sers for age in graphic */}
                             <div style={{ width: "280px" }}>
                                 <LineChartComponent data={ageDataChart} />
                             </div>
@@ -201,6 +203,7 @@ export const DashboardSuperAdmin = () => {
 
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '20rem' }}>
+                            {/* Call users for roles in graphic */}
                             <div style={{ width: "300px" }}>
                                 <DoughnutChartComponent data={roleDataChart} />
                             </div>
@@ -209,6 +212,7 @@ export const DashboardSuperAdmin = () => {
 
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '20rem' }}>
+                            {/* Call users for nationality in graphic */}
                             <div style={{ width: "300px" }}>
                                 <BarChartComponent data={nationalityDataChart} />
                             </div>
@@ -217,6 +221,7 @@ export const DashboardSuperAdmin = () => {
 
                     <div className="col-6 col-sm-4">
                         <div className='card text-bg-dark mb-3' style={{ maxWidth: '22rem' }}>
+                            {/* Call users for age and genders in graphic */}
                             <div style={{ width: "300px" }}>
                                 <BarChartComponent data={AgeGenderDataChart} options={options} />
                             </div>

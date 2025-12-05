@@ -1,9 +1,11 @@
+import './Buildinds.css'
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
 import { userData } from "../../app/slices/userSlice";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { buildings } from "../../services/root";
+import { CBotton, CTableNormal } from "../../common/Componentes/Componentes";
 
 
 export const Buildings = () => {
@@ -32,6 +34,9 @@ export const Buildings = () => {
         }
     }, [token, isPermisionRoled, navigate])
 
+   
+
+    //////////////////////     List buiding
     useEffect(() => {
 
         if (!isPermisionRoled || !token) return;
@@ -52,8 +57,69 @@ export const Buildings = () => {
 
     }, [token, isPermisionRoled])
 
+    //////////////////////     Title table
+    const columns = [
+        { header: "ID", accessor: "id" },
+        { header: "Address", accessor: "address" },
+        { header: "Number", accessor: "number_build" },
+        { header: "Country", accessor: "country" },
+        { header: "Province", accessor: "province" },
+        { header: "City", accessor: "city" },
+        { header: "Postal code", accessor: "postal_code" },
+        { header: "Build type", accessor: "build_type" },
+        { header: "Quantity apartment", accessor: "quantity_apartment" },
+        { header: "Floor Number", accessor: "floor_number" },
+    ]
+
     return (
         <>
+            <div className="buildingDesign">
+                <h1>BUILDINGS</h1>
+
+                {/* element table */}
+                <CTableNormal columns={columns}
+                    data={listBuildings}
+                    editRowId={""}
+                    editedData={""}
+                    handleInputChange={""}
+                    renderActions={(row) => (
+                        <div className='row'>
+                            {"editBuild" === row.id ? (
+                                <>
+                                    <CBotton
+                                        // onClick={updateBuildings}
+                                        label={<i className="bi bi-check2"></i>}
+                                        customClass="btn-success btn-table-listBuilding"
+                                    />
+                                    <CBotton
+                                        // onClick={() => handleCancelEdit()}
+                                        label={<i className="bi bi-x"></i>}
+                                        customClass="btn-secondary btn-table-listBuilding"
+                                    />
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        className="btn btn-warning btn-table-listDisease"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalEditBuild"
+                                    // onClick={() => handleEditModal(row.id)}
+                                    >
+                                        <i className="bi bi-feather"></i>
+                                    </button>
+                                    <CBotton
+                                        label={<i className="bi bi-trash3"></i>}
+                                        type="button"
+                                        customClass="btn-danger btn-table-listBuilding"
+                                    // onClick={() => deletedBuildings(row.id)}
+                                    />
+                                </>
+                            )
+                            }
+                        </div>
+                    )}
+                />
+            </div>
         </>
     )
 }

@@ -50,6 +50,20 @@ export const CTextAreaBootstrap = ({ label, id, type, name, placeholder, value, 
     )
 }
 
+//////////////////////////   Component Botton
+export const CBotton = ({ label, onClick, type = "button", customClass, disabled = false, children, ...rest }) => {
+    return (
+        <button
+            type={type}
+            className={`btn-component btn ${customClass}`}
+            onClick={onClick}
+            disabled={disabled}
+        >
+            {label}
+        </button>
+    )
+}
+
 //////////////////////////   Component Selector  
 export const CSelectorImage = ({ value, options = [], changeEmit, customClass }) => {
     return (
