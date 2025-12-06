@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { buildings } from "../../services/root";
 import { CBotton, CTableNormal } from "../../common/Componentes/Componentes";
+import Swal from 'sweetalert2';
 
 
 export const Buildings = () => {
@@ -75,6 +76,40 @@ export const Buildings = () => {
 
     }, [token, isPermisionRoled])
 
+    //////////////////////     List buiding
+    const deleteBuild = async (id_build) => {
+        if (!isPermisionRoled || !token) {
+            Swal.fire("Acceso denegado", "No tienes permisos para eliminar edificio.", "error")
+            return;
+        }
+
+        try {
+            const fetchedBuildings = await buildings.rootDeleteBuilding(token, id_build);
+
+            if (!fetchedBuildings.success) {
+                throw new Error(fetchedBuildings.message || "No se pudo eliminar el edificio.", "error")
+            }
+
+            const rechargeFetchedBuildings = await buildings.rootAllBuildings(token);
+            if (!rechargeFetchedBuildings.success || !Array.isArray(rechargeFetchedBuildings.data)) {
+                setListBuildings([]);
+                return;
+            }
+
+            const newList = rechargeFetchedBuildings.data;
+            const maxPages = Math.ceil(newList.length / rowsPage);
+
+            if (page > maxPages) {
+                setPage(maxPages);
+            }
+            setListBuildings(newList);
+            
+        } catch (error) {
+            console.error("Error al eliminar building:", error);
+            Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar eliminar el building.', 'error');
+        }
+    }
+
     const paginatedData = listBuildings.slice(
         (page - 1) * rowsPage,
         (page - 1) * rowsPage + rowsPage
@@ -139,7 +174,7 @@ export const Buildings = () => {
                                         label={<i className="bi bi-trash3"></i>}
                                         type="button"
                                         customClass="btn-danger btn-table-listBuilding"
-                                    // onClick={() => deletedBuildings(row.id)}
+                                        onClick={() => deleteBuild(row.id)}
                                     />
                                 </>
                             )
