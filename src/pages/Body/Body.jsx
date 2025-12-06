@@ -4,6 +4,7 @@ import { DashboardSuperAdmin } from "../DashboardSuperAdmin/DashboardSuperAdmin"
 import { Register } from "../Register/Register"
 import { Home } from "../Home/Home"
 import { BuildingsManager } from "../Buildings/BuidingsManager"
+import { UsersManager } from "../UsersManager/UsersManager"
 
 export const Body = () =>{
     return(
@@ -13,6 +14,7 @@ export const Body = () =>{
             <Route path="/register" element= {<Register />}/>
             <Route path="/login" element= {< Login />}/>
             <Route path="/dashboardSuperAdmin" element= {< DashboardSuperAdmin />}/>
+            <Route path="/usersmanager" element= {< UsersManager />}/>
             <Route path="/buildingsmanager" element= {< BuildingsManager />}/>
         </Routes>
 
