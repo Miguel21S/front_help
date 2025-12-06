@@ -5,8 +5,9 @@ import { userData } from "../../app/slices/userSlice";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { buildings } from "../../services/root";
-import { CBotton, CTableNormal } from "../../common/Componentes/Componentes";
+import { CBotton, CInputBootstrap, CTableNormal } from "../../common/Componentes/Componentes";
 import Swal from 'sweetalert2';
+import { normalizeVariable } from '../../util/metodos';
 
 
 export const Buildings = () => {
@@ -42,6 +43,19 @@ export const Buildings = () => {
         }
     }
 
+    //////////////////////     sweetalert2
+    const toast = Swal.mixin({
+        toast: true,
+        position: 'center',
+        iconColor: 'white',
+        customClass: {
+            popup: 'colored-toast',
+        },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+    })
+
     useEffect(() => {
         if (!token || !isPermisionRoled) {
             navigate('/')
@@ -57,16 +71,16 @@ export const Buildings = () => {
         setPage(e)
     }
     //////////////////////     State for input
-    const handelModalAdd = (e)=>{
-        const {name, value} = e.target;
+    const handelModalAdd = (e) => {
+        const { name, value } = e.target;
         setAddBuilding(prevStat => ({
             ...prevStat,
-            [name]:value
+            [name]: value
         }))
     }
-    
+
     //////////////////////     State for btn
-    const handleInputEdit = (e) => {
+    const handleInputEditChange = (e) => {
         const { name, value } = e.target;
         setEditedData(prevStat => ({
             ...prevStat,
@@ -78,23 +92,23 @@ export const Buildings = () => {
     }
 
     //////////////////////     State for button in table
-    const handleEditModalBtnTable = (rowId) =>{
+    const handleEditModalBtnTable = (rowId) => {
         setEditBuild(rowId);
 
         const selectedBuild = listBuildings.find(i => i.id === rowId)
         setEditedData(prevStat => ({
             ...prevStat,
-            [rowId]: {...selectedBuild}
+            [rowId]: { ...selectedBuild }
         }));
     }
 
     //////////////////////     State for button in table
-    const handleCancelEditTable = ()=>{
+    const handleCancelEditTable = () => {
         setEditBuild(null)
         setEditedData({})
     }
 
-    //////////////////////     List buiding
+    //////////////////////     List buildings
     useEffect(() => {
 
         if (!isPermisionRoled || !token) return;
@@ -115,7 +129,72 @@ export const Buildings = () => {
 
     }, [token, isPermisionRoled])
 
-    //////////////////////     List buiding
+    //////////////////////     Update build
+    const updateBuildings = async () => {
+        if (!isPermisionRoled || !token) {
+            Swal.fire("Acceso denegado", "No tienes permisos para actualizar edificio.", "error");
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres actualizar este edificio?',
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Sí, guardar',
+            denyButtonText: "No guardar",
+            cancelButtonText: "Cancelar",
+            focusConfirm: false,
+            allowEnterKey: false,
+        })
+
+        if (result.isConfirmed) {
+            try {
+                if (!editBuild || !editedData[editBuild]) {
+                    Swal.fire("Error", "No hay datos para actualizar.", "error");
+                    return;
+                }
+
+                const buidingData = editedData[editBuild];
+
+                const existBuild = listBuildings.some(build =>
+                    normalizeVariable(build.address) === normalizeVariable(buidingData.address) &&
+                    normalizeVariable(build.number_build) === normalizeVariable(buidingData.number_build) &&
+                    normalizeVariable(build.postal_code) === normalizeVariable(buidingData.postal_code) &&
+                    normalizeVariable(build.city) === normalizeVariable(buidingData.city) &&
+                    normalizeVariable(build.province) === normalizeVariable(buidingData.province) &&
+                    normalizeVariable(build.id) !== normalizeVariable(editBuild)
+                )
+                if (existBuild) {
+                    Swal.fire("Error", "Ya existe un edificio con esta dirección. País, Provincia, Código Postal, Ciudad, Nº de Edificio.", "error")
+                    return;
+                }
+                await buildings.rootUpdateBuild(editBuild, buidingData, token);
+
+                setListBuildings(prevBuildings =>
+                    prevBuildings.map(build =>
+                        build.id === editBuild ? { ...build, ...buidingData } : build
+                    )
+                )
+                toast.fire("¡se han guardado los cambios!", "", "success");
+
+                setEditBuild(null);
+                setEditedData({});
+            } catch (error) {
+                console.error("Error al actualizar edificio:", error);
+                Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar actualizar edificio.', 'error');
+            }
+        } else if (result.isDenied) {
+            Swal.fire("Puedes seguir editando.", "", "info");
+
+        } else {
+            setEditBuild(null);
+            setEditedData({});
+        }
+    }
+
+    //////////////////////     Delete build
     const deleteBuild = async (id_build) => {
         if (!isPermisionRoled || !token) {
             Swal.fire("Acceso denegado", "No tienes permisos para eliminar edificio.", "error")
@@ -183,18 +262,18 @@ export const Buildings = () => {
                     data={paginatedData}
                     editRowId={""}
                     editedData={""}
-                    handleInputChange={""}
+                    handleInputChange={handleInputEditChange}
                     renderActions={(row) => (
                         <div className='row'>
                             {"editBuild" === row.id ? (
                                 <>
                                     <CBotton
-                                        // onClick={updateBuildings}
+                                        onClick={updateBuildings}
                                         label={<i className="bi bi-check2"></i>}
                                         customClass="btn-success btn-table-listBuilding"
                                     />
                                     <CBotton
-                                        // onClick={() => handleCancelEdit()}
+                                        onClick={() => handleCancelEditTable()}
                                         label={<i className="bi bi-x"></i>}
                                         customClass="btn-secondary btn-table-listBuilding"
                                     />
@@ -205,7 +284,7 @@ export const Buildings = () => {
                                         className="btn btn-warning btn-table-listDisease"
                                         data-bs-toggle="modal"
                                         data-bs-target="#modalEditBuild"
-                                    // onClick={() => handleEditModal(row.id)}
+                                        onClick={() => handleEditModalBtnTable(row.id)}
                                     >
                                         <i className="bi bi-feather"></i>
                                     </button>
@@ -259,6 +338,107 @@ export const Buildings = () => {
                         </li>
                     </ul>
                 </nav>
+            </div>
+
+            {/* Modal Update */}
+            <div className="modal fade" id="modalEditBuild" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
+                    <div className="modal-content">
+                        <div className="modal-header ">
+                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
+                        </div>
+                        <div className="modal-body">
+                            <>
+                                <div className="row">
+                                    <div className='col'>
+                                        <CInputBootstrap
+                                            label="Dirección"
+                                            type="address"
+                                            name="address"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.address || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Código Posta"
+                                            type="postal_code"
+                                            name="postal_code"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.postal_code || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Provincia"
+                                            type="province"
+                                            name="province"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.province || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Total de apartamentos"
+                                            type="Number"
+                                            name="quantity_apartment"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.quantity_apartment || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                    </div>
+                                    <div className='col'>
+
+                                        <CInputBootstrap
+                                            label="Nº Edificio"
+                                            type="number_build"
+                                            name="number_build"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.number_build || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Ciudad"
+                                            type="city"
+                                            name="city"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.city || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Tipo de Edificio"
+                                            type="build_type"
+                                            name="build_type"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.build_type || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Nº Piso"
+                                            type="Number"
+                                            name="floor_number"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.floor_number || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+
+                                    </div>
+                                </div>
+                            </>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary" onClick={updateBuildings}>Guardar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
     )
