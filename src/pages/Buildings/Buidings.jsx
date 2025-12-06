@@ -14,7 +14,20 @@ export const Buildings = () => {
     const token = useSelector(userData).credentials.token || null
 
     const [listBuildings, setListBuildings] = useState([])
-    const [editedData, setEditedData] = useState([])
+    const [editBuild, setEditBuild] = useState([])
+    const [editedData, setEditedData] = useState({
+        id: "true",
+        address: "true",
+        number_build: "true",
+        postal_code: "true",
+        city: "true",
+        province: "true",
+        quantity_apartment: "true",
+        build_type: "true",
+        floor_number: "true",
+    })
+
+    const [addBuilding, setAddBuilding] = useState({})
 
     let decodificado = null;
     let isPermisionRoled = false;
@@ -44,16 +57,42 @@ export const Buildings = () => {
         setPage(e)
     }
     //////////////////////     State for input
-    // const handleInput = (e) => {
-    //     const { name, value } = e.target;
-    //     setEditedData(prevStat => ({
-    //         ...prevStat,
-    //         [__a]: {
-    //             prevStat(__a),
-    //             [name]: value,
-    //         }
-    //     }))
-    // }
+    const handelModalAdd = (e)=>{
+        const {name, value} = e.target;
+        setAddBuilding(prevStat => ({
+            ...prevStat,
+            [name]:value
+        }))
+    }
+    
+    //////////////////////     State for btn
+    const handleInputEdit = (e) => {
+        const { name, value } = e.target;
+        setEditedData(prevStat => ({
+            ...prevStat,
+            [editBuild]: {
+                ...prevStat[editBuild],
+                [name]: value,
+            }
+        }))
+    }
+
+    //////////////////////     State for button in table
+    const handleEditModalBtnTable = (rowId) =>{
+        setEditBuild(rowId);
+
+        const selectedBuild = listBuildings.find(i => i.id === rowId)
+        setEditedData(prevStat => ({
+            ...prevStat,
+            [rowId]: {...selectedBuild}
+        }));
+    }
+
+    //////////////////////     State for button in table
+    const handleCancelEditTable = ()=>{
+        setEditBuild(null)
+        setEditedData({})
+    }
 
     //////////////////////     List buiding
     useEffect(() => {
@@ -103,7 +142,7 @@ export const Buildings = () => {
                 setPage(maxPages);
             }
             setListBuildings(newList);
-            
+
         } catch (error) {
             console.error("Error al eliminar building:", error);
             Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar eliminar el building.', 'error');
@@ -139,7 +178,7 @@ export const Buildings = () => {
             <div className="buildingDesign">
                 <h1>BUILDINGS</h1>
 
-                {/* element table */}
+                {/* Element table */}
                 <CTableNormal columns={columns}
                     data={paginatedData}
                     editRowId={""}
