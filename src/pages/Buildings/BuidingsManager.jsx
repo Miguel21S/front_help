@@ -1,4 +1,4 @@
-import './Buildinds.css'
+import './BuildindsManager.css'
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom"
 import { userData } from "../../app/slices/userSlice";
@@ -7,10 +7,9 @@ import { jwtDecode } from "jwt-decode";
 import { buildings } from "../../services/root";
 import { CBotton, CInputBootstrap, CTableNormal } from "../../common/Componentes/Componentes";
 import Swal from 'sweetalert2';
-import { normalizeVariable } from '../../util/metodos';
+import { hasEmptyFields, normalizeObject } from '../../util/validation';
 
-
-export const Buildings = () => {
+export const BuildingsManager = () => {
     const navigate = useNavigate();
     const token = useSelector(userData).credentials.token || null
 
@@ -20,15 +19,26 @@ export const Buildings = () => {
         id: "true",
         address: "true",
         number_build: "true",
-        postal_code: "true",
-        city: "true",
+        country: "true",
         province: "true",
-        quantity_apartment: "true",
+        city: "true",
+        postal_code: "true",
         build_type: "true",
+        quantity_apartment: "true",
         floor_number: "true",
     })
 
-    const [addBuilding, setAddBuilding] = useState({})
+    const [addBuilding, setAddBuilding] = useState({
+        address: "",
+        number_build: "",
+        country: "",
+        province: "",
+        city: "",
+        postal_code: "",
+        build_type: "",
+        quantity_apartment: "",
+        floor_number: "",
+    })
 
     let decodificado = null;
     let isPermisionRoled = false;
@@ -130,6 +140,78 @@ export const Buildings = () => {
     }, [token, isPermisionRoled])
 
     //////////////////////     Update build
+
+    //////////////////////     Update build
+    const addBuild = async () => {
+        if (!isPermisionRoled || !token) {
+            Swal.fire("Acceso denegado", "No tienes permisos para adicionar edificio.", "error")
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres adicionar este edificio?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: "Cancelar",
+            focusConfirm: false,
+            allowEnterKey: false
+        })
+        if (!result.isConfirmed) {
+            setEditBuild(null);
+            setEditedData({});
+            return;
+        }
+
+        try {
+            const emptyField = hasEmptyFields(addBuilding)
+            if (emptyField) {
+                Swal.fire("Debes rellenar todos los campos", "", "warning");
+                return;
+            }
+
+            const existBuilding = normalizeObject(addBuilding)
+
+            if (existBuilding) {
+                Swal.fire("Error", "País, Provincia, Código Postal, Ciudad, Nº de Edificio. Esta dirección ya existe en la base de dato.", "error")
+                return;
+            }
+
+            const createBuild = await buildings.rootAddBuildings(addBuilding, token)
+
+            if (!createBuild.success) {
+                Swal.fire("Error", createBuild.message || "No se pudo adicionar el edificio", "error");
+                return;
+            }
+
+            setAddBuilding({
+                address: "",
+                number_build: "",
+                country: "",
+                province: "",
+                city: "",
+                postal_code: "",
+                build_type: "",
+                quantity_apartment: "",
+                floor_number: "",
+            })
+
+            const reloadListBuilding = await buildings.rootAllBuildings(token);
+            if (reloadListBuilding.data && Array.isArray(reloadListBuilding.data)) {
+                setListBuildings(reloadListBuilding.data);
+            } else {
+                console.error("Datos recibidos no son un array");
+                setListBuildings([]);
+            }
+            toast.fire("¡se han adicionado el edificio!", "", "success");
+
+        } catch (error) {
+            console.error("Error en adicionar edificio:", error);
+            Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar adicionar edificio.', 'error');
+        }
+    }
+
     const updateBuildings = async () => {
         if (!isPermisionRoled || !token) {
             Swal.fire("Acceso denegado", "No tienes permisos para actualizar edificio.", "error");
@@ -158,14 +240,8 @@ export const Buildings = () => {
 
                 const buidingData = editedData[editBuild];
 
-                const existBuild = listBuildings.some(build =>
-                    normalizeVariable(build.address) === normalizeVariable(buidingData.address) &&
-                    normalizeVariable(build.number_build) === normalizeVariable(buidingData.number_build) &&
-                    normalizeVariable(build.postal_code) === normalizeVariable(buidingData.postal_code) &&
-                    normalizeVariable(build.city) === normalizeVariable(buidingData.city) &&
-                    normalizeVariable(build.province) === normalizeVariable(buidingData.province) &&
-                    normalizeVariable(build.id) !== normalizeVariable(editBuild)
-                )
+                const existBuild = normalizeObject(buidingData)
+                
                 if (existBuild) {
                     Swal.fire("Error", "Ya existe un edificio con esta dirección. País, Provincia, Código Postal, Ciudad, Nº de Edificio.", "error")
                     return;
@@ -340,6 +416,119 @@ export const Buildings = () => {
                 </nav>
             </div>
 
+            <button type="button" className="btn btn-primary btn-addBulding" data-bs-toggle="modal" data-bs-target="#openModalBuildingManager">
+                {<span className="bi bi-arrows-fullscreen org-icon-btn-build">
+                    <div className="marge-icon-btn-build" style={{ margin: "8px" }}> Adicionar edificio </div>
+                </span>}
+            </button>
+            {/* <!-- Modal AddBuild--> */}
+            <div className="modal fade" id="openModalBuildingManager" data-bs-backdrop="static" data-bs-keyboard="false"
+                tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div className="modal-dialog " style={{ maxWidth: '900px', width: '100%' }}>
+                    <div className="modal-content d-flex">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5 " id="staticBackdropLabel">Adicionar Edificio</h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            <>
+                                <div className='row '>
+                                    <div className='col'>
+                                        <CInputBootstrap
+                                            label="Dirección"
+                                            type="address"
+                                            name="address"
+                                            placeholder=""
+                                            value={addBuilding.address || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="País"
+                                            type="country"
+                                            name="country"
+                                            placeholder=""
+                                            value={addBuilding.country || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Ciudad"
+                                            type="city"
+                                            name="city"
+                                            placeholder=""
+                                            value={addBuilding.city || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Tipo de edificio"
+                                            type="text"
+                                            name="build_type"
+                                            placeholder=""
+                                            value={addBuilding.build_type || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Nº Piso"
+                                            type="Number"
+                                            name="floor_number"
+                                            placeholder=""
+                                            value={addBuilding.floor_number || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                    </div>
+                                    <div className='col'>
+                                        <CInputBootstrap
+                                            label="Nº Edificio"
+                                            type="number_build"
+                                            name="number_build"
+                                            placeholder=""
+                                            value={addBuilding.number_build || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Provincia"
+                                            type="province"
+                                            name="province"
+                                            placeholder=""
+                                            value={addBuilding.province || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Código Postal"
+                                            type="postal_code"
+                                            name="postal_code"
+                                            placeholder=""
+                                            value={addBuilding.postal_code || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                        <CInputBootstrap
+                                            label="Total de apartamentos"
+                                            type="Number"
+                                            name="quantity_apartment"
+                                            placeholder=""
+                                            value={addBuilding.quantity_apartment || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handelModalAdd}
+                                        />
+                                    </div>
+                                </div>
+                            </>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-primary btn-cardNormal-building" onClick={addBuild}>Guardar</button>
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {/* Modal Update */}
             <div className="modal fade" id="modalEditBuild" data-bs-backdrop="static" data-bs-keyboard="false"
                 tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -363,41 +552,11 @@ export const Buildings = () => {
                                             changeEmit={handleInputEditChange}
                                         />
                                         <CInputBootstrap
-                                            label="Código Posta"
-                                            type="postal_code"
-                                            name="postal_code"
+                                            label="País"
+                                            type="text"
+                                            name="country"
                                             placeholder=""
-                                            value={editedData[editBuild]?.postal_code || ""}
-                                            customClass={"input-cardNormal-building"}
-                                            changeEmit={handleInputEditChange}
-                                        />
-                                        <CInputBootstrap
-                                            label="Provincia"
-                                            type="province"
-                                            name="province"
-                                            placeholder=""
-                                            value={editedData[editBuild]?.province || ""}
-                                            customClass={"input-cardNormal-building"}
-                                            changeEmit={handleInputEditChange}
-                                        />
-                                        <CInputBootstrap
-                                            label="Total de apartamentos"
-                                            type="Number"
-                                            name="quantity_apartment"
-                                            placeholder=""
-                                            value={editedData[editBuild]?.quantity_apartment || ""}
-                                            customClass={"input-cardNormal-building"}
-                                            changeEmit={handleInputEditChange}
-                                        />
-                                    </div>
-                                    <div className='col'>
-
-                                        <CInputBootstrap
-                                            label="Nº Edificio"
-                                            type="number_build"
-                                            name="number_build"
-                                            placeholder=""
-                                            value={editedData[editBuild]?.number_build || ""}
+                                            value={editedData[editBuild]?.country || ""}
                                             customClass={"input-cardNormal-building"}
                                             changeEmit={handleInputEditChange}
                                         />
@@ -428,7 +587,44 @@ export const Buildings = () => {
                                             customClass={"input-cardNormal-building"}
                                             changeEmit={handleInputEditChange}
                                         />
-
+                                    </div>
+                                    <div className='col'>
+                                        <CInputBootstrap
+                                            label="Nº Edificio"
+                                            type="number_build"
+                                            name="number_build"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.number_build || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Provincia"
+                                            type="province"
+                                            name="province"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.province || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Código Posta"
+                                            type="postal_code"
+                                            name="postal_code"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.postal_code || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
+                                        <CInputBootstrap
+                                            label="Total de apartamentos"
+                                            type="Number"
+                                            name="quantity_apartment"
+                                            placeholder=""
+                                            value={editedData[editBuild]?.quantity_apartment || ""}
+                                            customClass={"input-cardNormal-building"}
+                                            changeEmit={handleInputEditChange}
+                                        />
                                     </div>
                                 </div>
                             </>

@@ -3,7 +3,7 @@ import { Login } from "../Login/Login"
 import { DashboardSuperAdmin } from "../DashboardSuperAdmin/DashboardSuperAdmin"
 import { Register } from "../Register/Register"
 import { Home } from "../Home/Home"
-import { Buildings } from "../Buildings/Buidings"
+import { BuildingsManager } from "../Buildings/BuidingsManager"
 
 export const Body = () =>{
     return(
@@ -13,7 +13,7 @@ export const Body = () =>{
             <Route path="/register" element= {<Register />}/>
             <Route path="/login" element= {< Login />}/>
             <Route path="/dashboardSuperAdmin" element= {< DashboardSuperAdmin />}/>
-            <Route path="/buildings" element= {< Buildings />}/>
+            <Route path="/buildingsmanager" element= {< BuildingsManager />}/>
         </Routes>
 
     )
