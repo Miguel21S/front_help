@@ -13,6 +13,7 @@ export const BuildingsManager = () => {
     const navigate = useNavigate();
     const token = useSelector(userData).credentials.token || null
 
+    //////////////////////     Variables de estados
     const [listBuildings, setListBuildings] = useState([])
     const [editBuild, setEditBuild] = useState([])
     const [editedData, setEditedData] = useState({
@@ -241,7 +242,7 @@ export const BuildingsManager = () => {
                 const buidingData = editedData[editBuild];
 
                 const existBuild = normalizeObject(buidingData)
-                
+
                 if (existBuild) {
                     Swal.fire("Error", "Ya existe un edificio con esta dirección. País, Provincia, Código Postal, Ciudad, Nº de Edificio.", "error")
                     return;
