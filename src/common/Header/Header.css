@@ -26,7 +26,7 @@
     position: sticky;
     top: 0;
     /* overflow: hidden; TENGO QUE VERLO */
-    overflow: visible !important; /* nuevo */
+    /* overflow: visible !important; nuevo */
     background-color: #333;
     z-index: 1000;
 }
@@ -125,52 +125,4 @@
     justify-content: center;
 }
 
-/* nuevo */
-.dropdown-menu {
-    animation: fadeIn 0.12s ease-in-out;
-}
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(3px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-
-/* Evita que el menú invada toda la pantalla */
-.navbar-collapse {
-    max-height: 85vh;
-    overflow-y: auto;
-    padding-bottom: 20px;
-}
-
-/* Botón de cerrar visible solo en mobile */
-.btn-close-menu {
-    background: #444;
-    color: white;
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
-    border: none;
-    margin-bottom: 15px;
-    text-align: center;
-    border-radius: 5px;
-}
-
-/* Ocultar botón en desktop */
-@media (min-width: 992px) {
-    .btn-close-menu {
-        display: none;
-    }
-}
-
-/* Importante para evitar bugs en dropdowns verticales */
-/* .navbar {
-    overflow: visible !important;
-} */
-
-/* Mega menú responsivo */
-@media (max-width: 991px) {
-    .item-drop {
-        width: 100% !important;
-    }
-}
