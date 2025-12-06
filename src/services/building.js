@@ -1,6 +1,37 @@
 const root = 'http://localhost:2025/api/buildings/'
 
 ////////////////   ROOT GET ALL BUILDING
+export const rootAddBuildings = async (datos, token) => {
+    try {
+        const response = await fetch(`${root}auth/admin/create`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(datos)
+
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Error en adicionar edificio")
+        }
+
+        const data = await response.json();
+        console.log('ANTES DEL DATA:', data)
+        if (!data.success) {
+            throw new Error(data.message);
+        }
+        console.log('DESPUES DEL DATA:', data)
+        return data;
+    } catch (error) {
+        console.error("Error fetching buildings:", error.message);
+        return { success: false, message: error.message };
+    }
+}
+
+////////////////   ROOT GET ALL BUILDING
 export const rootAllBuildings = async (token) => {
     try {
         const response = await fetch(`${root}auth/admin/list`, {
