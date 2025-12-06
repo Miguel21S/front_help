@@ -132,25 +132,55 @@ export const DashboardSuperAdmin = () => {
     }
 
     //////////////////////     Users for age and genders
-    const ageGroups = [...new Set(usersAgeGenderData?.map(i => i.group_age))];
-    const genders = [...new Set(usersAgeGenderData?.map(i => i.gender))];
+    // const ageGroups = [...new Set(usersAgeGenderData?.map(i => i.group_age))];
+    const ageGroups = [...new Set(
+    usersAgeGenderData
+        ?.filter(i => i.group_age !== null && i.gender !== null)
+        .map(i => i.group_age)
+)];
+    // const genders = [...new Set(usersAgeGenderData?.map(i => i.gender))];
+    const genders = [...new Set(
+    usersAgeGenderData
+        ?.filter(i => i.gender !== null)
+        .map(i => i.gender)
+)];
     const genderColors = generateColors(genders.length);
 
-    const datasets = genders.map((gender, index) => ({
-        label: gender,
-        backgroundColor: genderColors[index],
-        data: ageGroups.map(
-            age =>
-                Number(
-                    usersAgeGenderData.find(
-                        item => item.group_age === age && item.gender === gender
-                    )?.count || 0
-                )
-        ),
-    }));
+    const genderDatasets = genders.map((gender, index) => ({
+    label: gender,
+    backgroundColor: genderColors[index],
+    data: ageGroups.map(age =>
+        Number(
+            usersAgeGenderData.find(item =>
+                item.group_age === age && item.gender === gender
+            )?.count || 0
+        )
+    )
+}));
+
+    // const AgeGenderDataChart = {
+    //     labels: ageGroups,
+    //     datasets: datasets
+    // };
+
+    const totalsDataset = {
+    label: "Total",
+    backgroundColor: "#4ffe3755",
+    data: ageGroups.map(age =>
+        Number(
+            usersAgeGenderData.find(item =>
+                item.group_age === age && item.gender === null
+            )?.count || 0
+        )
+    )
+};
+
     const AgeGenderDataChart = {
         labels: ageGroups,
-        datasets: datasets
+        datasets: [
+            totalsDataset,   // total por grupo de edad
+            ...genderDatasets  // M, F, etc.
+        ]
     };
 
     //////////////////////     Style for graphic
