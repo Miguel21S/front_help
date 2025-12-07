@@ -312,7 +312,7 @@ export const BuildingsManager = () => {
 
     const totalPages = Math.ceil(listBuildings.length / rowsPage);
     const currentBlock = Math.ceil(page / maxPageNumbers);
-    const startPage = (currentBlock - 1) / maxPageNumbers + 1;
+    const startPage = (currentBlock - 1) * maxPageNumbers + 1;
     const endPage = Math.min(startPage + maxPageNumbers - 1, totalPages)
 
     //////////////////////     Title table

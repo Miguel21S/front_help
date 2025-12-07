@@ -20,7 +20,7 @@ export const rootListAllUsers = async (token) => {
         if (!data.success) {
             throw new Error(data.message);
         }
-        console.log('DESPUES DEL DATA:', data)
+
         return data;
     } catch (error) {
         console.error("Error fetching users:", error.message);
