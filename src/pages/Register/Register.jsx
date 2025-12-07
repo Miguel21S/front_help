@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import './Register.css'
-import { auth } from '../../services/root';
+import { auth, users } from '../../services/root';
 import Swal from 'sweetalert2';
 
 ///////////////////   Reglas de validación de contraseña
@@ -89,6 +89,12 @@ export const Register = () => {
                     return;
                 }
 
+                const compareEmail = await users.rootCompareEmail(values.email);
+                if(compareEmail){
+                    Swal.fire("Error", "Este correo ya está registrado.", "error")
+                    return;
+                }
+                
                 const userRegister = await auth.rootRegister(values);
                 if (userRegister.success) {
                     setTimeout(() => {
