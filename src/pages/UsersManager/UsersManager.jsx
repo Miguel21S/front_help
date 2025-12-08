@@ -33,7 +33,7 @@ export const UsersManager = () => {
     const [page, setPage] = useState(1);
     const [rowsPage] = useState(10);
     const maxPageNumbers = 10;
-    
+
     //////////////////////     
     const handlerChangePage = (e) => {
         setPage(e)
@@ -127,6 +127,39 @@ export const UsersManager = () => {
         listarU()
     }, [token])
 
+    //////////////////////     Delete users
+    const deleteUser = async (id) => {
+        if (!token || !isPermisionRoled) {
+            Swal.fire("Acceso denegado", "No tienes permisos para eliminar usuario.", "error")
+            return;
+        }
+
+        try {
+            const fetchedUserDelete = await users.rootDeleteUser(id, token);
+
+            if (!fetchedUserDelete.success) {
+                throw new Error(fetchedUserDelete.message || "No se pudo eliminar usuario.", "error")
+            }
+
+            const reloadListUsers = await users.rootListAllUsers(token);
+            if (!reloadListUsers.success || !Array.isArray(reloadListUsers.data)) {
+                setListUsers([]);
+                return;
+            }
+
+            const newList = reloadListUsers.data
+            const maxPages = Math.ceil(newList.length / rowsPage)
+
+            if (page > maxPages) {
+                setPage(maxPages)
+            }
+            setListUsers(newList)
+        } catch (error) {
+            console.error("Error al eliminar building:", error);
+            Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar eliminar el building.', 'error');
+        }
+    }
+
     //////////////////////     Pagination
     const paginatedData = listUsers.slice(
         (page - 1) * rowsPage,
@@ -192,8 +225,7 @@ export const UsersManager = () => {
                                         label={<i className="bi bi-trash3"></i>}
                                         type="button"
                                         customClass="btn-danger btn-table-listBuilding"
-                                        onClick={() => (row.id)}
-                                        // onClick={() => /* deleteBuild(row.id) */}
+                                        onClick={() => deleteUser(row.id)}
                                     />
                                 </>
                             )
