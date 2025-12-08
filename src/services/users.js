@@ -50,8 +50,8 @@ export const rootUpdateUser = async (id, datos, token) => {
         if (!data.success) {
             throw new Error(data.message);
         }
-        console.log('DESPUES DEL DATA:', data)
         return data;
+        
     } catch (error) {
         console.error("Error fetching users:", error.message);
         return { success: false, message: error.message };
@@ -79,8 +79,8 @@ export const rootDeleteUser = async (id, token) => {
         if (!data.success) {
             throw new Error(data.message);
         }
-        console.log('DESPUES DEL DATA:', data)
         return data;
+
     } catch (error) {
         console.error("Error fetching users:", error.message);
         return { success: false, message: error.message };

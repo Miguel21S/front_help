@@ -36,6 +36,15 @@ export const isValidEmail = (email) => /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za
 ///////////////  Valida números
 export const isNumber = (value) => /^[0-9]+$/.test(value.toString().trim());
 
+///////////////  Validación de variables
+export const convierte = (key) => {
+    if (!key) return "";
+    return key
+        .replace(/_/g, " ")                 // snake_case → snake case
+        .replace(/([A-Z])/g, " $1")         // camelCase → camel Case
+        .trim()
+        .replace(/\b\w/g, c => c.toUpperCase())
+}
 
 // export const hasEmptyRequired = (obj, fields) => fields.some(field => isEmptyValue(obj[field]));
 // Ej:

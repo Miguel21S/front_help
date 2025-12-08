@@ -19,12 +19,11 @@ export const rootAddBuildings = async (datos, token) => {
         }
 
         const data = await response.json();
-        console.log('ANTES DEL DATA:', data)
         if (!data.success) {
             throw new Error(data.message);
         }
-        console.log('DESPUES DEL DATA:', data)
         return data;
+
     } catch (error) {
         console.error("Error fetching buildings:", error.message);
         return { success: false, message: error.message };
@@ -49,12 +48,11 @@ export const rootAllBuildings = async (token) => {
         }
 
         const data = await response.json();
-        console.log('ANTES DEL DATA:', data)
         if (!data.success) {
             throw new Error(data.message);
         }
-        console.log('DESPUES DEL DATA:', data)
         return data;
+        
     } catch (error) {
         console.error("Error fetching buildings:", error.message);
         return { success: false, message: error.message };
