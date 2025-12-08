@@ -305,6 +305,7 @@ export const BuildingsManager = () => {
         }
     }
 
+    //////////////////////     Pagination
     const paginatedData = listBuildings.slice(
         (page - 1) * rowsPage,
         (page - 1) * rowsPage + rowsPage

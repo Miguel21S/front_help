@@ -6,7 +6,7 @@ import { userData } from '../../app/slices/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Swal from 'sweetalert2'
-import { CBotton, CTableNormal } from '../../common/Componentes/Componentes'
+import { CBotton, CInputBootstrap, CTableNormal } from '../../common/Componentes/Componentes'
 
 export const UsersManager = () => {
     const navigate = useNavigate();
@@ -14,9 +14,21 @@ export const UsersManager = () => {
 
     //////////////////////     Variables de estados
     const [listUsers, setListUsers] = useState([]);
-    const [addUser, setAddUser] = useState({})
     const [editUser, setEditUser] = useState([])
     const [editedData, setEditedData] = useState({
+        id: "",
+        name: "",
+        lastName: "",
+        date_born: "",
+        gender: "",
+        nationality: "",
+        special_situation: "",
+        phone: "",
+        email: "",
+        date_entry_apartment: "",
+        building_id: ""
+    })
+    const [addUser, setAddUser] = useState({
         id: "",
         name: "",
         lastName: "",
@@ -127,6 +139,74 @@ export const UsersManager = () => {
         listarU()
     }, [token])
 
+    //////////////////////     Update users
+    const UpdateUser = async () => {
+        if (!token || !isPermisionRoled) {
+            Swal.fire("Acceso denegado", "No tienes permisos para actualizar usuario.", "error")
+            return;
+        }
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: '¿Quieres actualizar este edificio?',
+            icon: 'warning',
+            showCancelButton: true,
+            showDenyButton: true,
+            confirmButtonText: 'Sí, guardar',
+            denyButtonText: "No guardar",
+            cancelButtonText: "Cancelar",
+            focusConfirm: false,
+            allowEnterKey: false,
+        })
+
+        if (result.isConfirmed) {
+            try {
+                if (!editUser || !editedData[editUser]) {
+                    Swal.fire("Error", "No hay datos para actualizar.", "error");
+                    return;
+                }
+
+                const userData = editedData[editUser];
+
+                const originalUser = listUsers.find(u => u.id === editUser);
+                const newEmail = userData.email;
+
+                if (newEmail !== originalUser.email) {
+                    const emailExists = listUsers.some(
+                        user => user.email === newEmail && user.id !== originalUser.id
+                    );
+    
+                    if (emailExists) {
+                        Swal.fire("Error", "Ya existe este Email.", "error");
+                        return;
+                    }
+                }
+
+                await users.rootUpdateUser(editUser, userData, token)
+
+                setListUsers(prevUsers =>
+                    prevUsers.map(user =>
+                        user.id === editUser ? { ...user, ...userData } : user
+                    )
+                )
+                toast.fire("¡se han guardado los cambios!", "", "success");
+
+                setEditUser(null);
+                setEditedData({});
+            } catch (error) {
+                console.error("Error al actualizar usuario:", error);
+                Swal.fire('Error', error.message || 'Ha ocurrido un error al intentar actualizar usuario.', 'error');
+            }
+        } else if (result.isDenied) {
+            Swal.fire("Puedes seguir editando.", "", "info");
+
+        } else {
+            setEditUser(null);
+            setEditedData({});
+        }
+    }
+
+
+
     //////////////////////     Delete users
     const deleteUser = async (id) => {
         if (!token || !isPermisionRoled) {
@@ -191,6 +271,134 @@ export const UsersManager = () => {
         <>
             <div className='usersDesign'>
                 <h1>Wolcome to Users page</h1>
+
+                {/* Modal Update */}
+                <div className="modal fade" id="modalEditBuild" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
+                        <div className="modal-content">
+                            <div className="modal-header ">
+                                <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
+                            </div>
+                            <div className="modal-body">
+                                <>
+                                    <div className="row">
+                                        <div className='col'>
+                                            <CInputBootstrap
+                                                label="Name"
+                                                type="text"
+                                                name="text"
+                                                placeholder=""
+                                                value={editedData[editUser]?.name || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+
+                                            <CInputBootstrap
+                                                label="Email"
+                                                type="email"
+                                                name="email"
+                                                placeholder=""
+                                                value={editedData[editUser]?.email || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Nationality"
+                                                type="text"
+                                                name="nationality"
+                                                placeholder=""
+                                                value={editedData[editUser]?.nationality || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Phone"
+                                                type="text"
+                                                name="phone"
+                                                placeholder=""
+                                                value={editedData[editUser]?.phone || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Date Born"
+                                                type="text"
+                                                name="date_born"
+                                                placeholder=""
+                                                value={editedData[editUser]?.date_born || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Role"
+                                                type="Number"
+                                                name="role_id"
+                                                placeholder=""
+                                                value={editedData[editUser]?.role_id || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                        </div>
+                                        <div className='col'>
+                                            <CInputBootstrap
+                                                label="Last Name"
+                                                type="text"
+                                                name="lastName"
+                                                placeholder=""
+                                                value={editedData[editUser]?.lastName || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Gender"
+                                                type="text"
+                                                name="gender"
+                                                placeholder=""
+                                                value={editedData[editUser]?.gender || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Special Situation"
+                                                type="text"
+                                                name="special_situation"
+                                                placeholder=""
+                                                value={editedData[editUser]?.special_situation || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Date Entry Apartment"
+                                                type="text"
+                                                name="date_entry_apartment"
+                                                placeholder=""
+                                                value={editedData[editUser]?.date_entry_apartment || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                            <CInputBootstrap
+                                                label="Building"
+                                                type="Number"
+                                                name="building_id"
+                                                placeholder=""
+                                                value={editedData[editUser]?.building_id || ""}
+                                                customClass={"input-cardNormal-building"}
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                        </div>
+                                    </div>
+                                </>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-primary" onClick={UpdateUser}>Guardar</button>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <CTableNormal columns={columns}
                     data={paginatedData}
                     editRowId={""}
@@ -201,7 +409,7 @@ export const UsersManager = () => {
                             {"editBuild" === row.id ? (
                                 <>
                                     <CBotton
-                                        // onClick={updateBuildings}
+                                        onClick={UpdateUser}
                                         label={<i className="bi bi-check2"></i>}
                                         customClass="btn-success btn-table-listBuilding"
                                     />

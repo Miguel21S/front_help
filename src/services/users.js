@@ -35,7 +35,7 @@ export const rootUpdateUser = async (id, datos, token) => {
         const response = await fetch(`${root}auth/admin/update/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/josn',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify(datos)
