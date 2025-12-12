@@ -7,7 +7,7 @@ import { jwtDecode } from "jwt-decode";
 import { buildings } from "../../services/root";
 import { CBotton, CInputBootstrap, CTableNormal } from "../../common/Componentes/Componentes";
 import Swal from 'sweetalert2';
-import { convierte, hasEmptyFields, normalizeVariable } from '../../util/validation';
+import { convierte, formatDate, hasEmptyFields, normalizeVariable } from '../../util/validation';
 
 export const BuildingsManager = () => {
     const navigate = useNavigate();
@@ -18,8 +18,8 @@ export const BuildingsManager = () => {
     const [editBuild, setEditBuild] = useState([])
     const [editedData, setEditedData] = useState({
         id: "true",
-        address: "true",
-        number_build: "true",
+        address_1: "true",
+        address_2: "true",
         country: "true",
         province: "true",
         city: "true",
@@ -27,18 +27,23 @@ export const BuildingsManager = () => {
         build_type: "true",
         quantity_apartment: "true",
         floor_number: "true",
+        last_maintenance: "true",
+        general_status: "true",
+        services_available: "true",
     })
-
     const [addBuilding, setAddBuilding] = useState({
-        address: "",
-        number_build: "",
+        address_1: "",
+        address_2: "",
         country: "",
         province: "",
         city: "",
         postal_code: "",
         build_type: "",
+        last_maintenance: "",
         quantity_apartment: "",
         floor_number: "",
+        services_available: "",
+        general_status: ""
     })
 
     let decodificado = null;
@@ -126,8 +131,13 @@ export const BuildingsManager = () => {
         const listAllBuild = async () => {
             try {
                 const fetchedBuildings = await buildings.rootAllBuildings(token);
-                if (fetchedBuildings.success && Array.isArray(fetchedBuildings.data)) {
-                    setListBuildings(fetchedBuildings.data)
+                if (Array.isArray(fetchedBuildings.data)) {
+                    const formatDataBuil = fetchedBuildings.data.map(build => ({
+                        ...build,
+                        last_maintenance: formatDate(build.last_maintenance)
+                    }))
+                    setListBuildings(formatDataBuil)
+
                 } else {
                     console.error("Los datos no son array")
                     setListBuildings([])
@@ -139,7 +149,6 @@ export const BuildingsManager = () => {
         listAllBuild();
 
     }, [token, isPermisionRoled])
-
 
     //////////////////////     Add build
     const addBuild = async () => {
@@ -194,15 +203,18 @@ export const BuildingsManager = () => {
             }
 
             setAddBuilding({
-                address: "",
-                number_build: "",
+                address_1: "",
+                address_2: "",
                 country: "",
                 province: "",
                 city: "",
                 postal_code: "",
                 build_type: "",
+                last_maintenance: "",
                 quantity_apartment: "",
                 floor_number: "",
+                services_available: "",
+                general_status: ""
             })
 
             const reloadListBuilding = await buildings.rootAllBuildings(token);
@@ -335,14 +347,17 @@ export const BuildingsManager = () => {
     //////////////////////     Title table
     const columns = [
         { header: "ID", accessor: "id" },
-        { header: "Address", accessor: "address" },
-        { header: "Number", accessor: "number_build" },
+        { header: "Address 1", accessor: "address_1" },
+        { header: "Address 2", accessor: "address_2" },
         { header: "Country", accessor: "country" },
         { header: "Province", accessor: "province" },
         { header: "City", accessor: "city" },
         { header: "Postal code", accessor: "postal_code" },
         { header: "Build type", accessor: "build_type" },
         { header: "Quantity apartment", accessor: "quantity_apartment" },
+        { header: "Last Maintenance", accessor: "last_maintenance", type: "date" },
+        { header: "General Status", accessor: "general_status" },
+        { header: "Services Available", accessor: "services_available" },
         { header: "Floor Number", accessor: "floor_number" },
     ]
 

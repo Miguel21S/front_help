@@ -99,16 +99,18 @@ export const CTableNormal = ({ columns, data, customClass, renderActions }) => {
                     {data && data.length > 0 ? (
                         data.map((row) => (
                             <tr key={row.id}>
-                                {columns.map((column, colIndex) => (
-                                    <td key={colIndex}>
-                                        {column.Cell
-                                            ? column.Cell({ value: row[column.accessor], row })
-                                            : column.render
-                                                ? column.render(row)
-                                                : row[column.accessor]}
-
-                                    </td>
-                                ))}
+                                {columns.map((column, colIndex) => {
+                                    const isDate = column.type === "date";
+                                    return (
+                                        <td key={colIndex} className={isDate ? "date-cell" : ""}>
+                                            {column.Cell
+                                                ? column.Cell({ value: row[column.accessor], row })
+                                                : column.render
+                                                    ? column.render(row)
+                                                    : row[column.accessor]}
+                                        </td>
+                                    );
+                                })}
                                 <td className='renderActionsBTN'>{renderActions(row)}</td>
                             </tr>
                         ))
@@ -119,6 +121,53 @@ export const CTableNormal = ({ columns, data, customClass, renderActions }) => {
                     )}
                 </tbody>
             </table>
+        </div>
+    );
+};
+
+export const InputField = ({ label, name, formik, type = "text", ...rest }) => {
+    return (
+        <div className="field-container">
+            <label>{label}</label>
+            <input
+                name={name}
+                type={type}
+                value={formik.values[name]}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                {...rest}
+            />
+
+            {formik.touched[name] && formik.errors[name] && (
+                <p className="error">{formik.errors[name]}</p>
+            )}
+        </div>
+    );
+};
+
+export const SelectField = ({ label, name, formik, options }) => {
+    return (
+        <div className="field-container">
+            <label>{label}</label>
+            <select
+                name={name}
+                value={formik.values[name]}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="register-select"
+            >
+                <option value="">Seleccione una opción</option>
+
+                {options.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                    </option>
+                ))}
+            </select>
+
+            {formik.touched[name] && formik.errors[name] && (
+                <p className="error">{formik.errors[name]}</p>
+            )}
         </div>
     );
 };

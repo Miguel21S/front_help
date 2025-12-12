@@ -46,6 +46,18 @@ export const convierte = (key) => {
         .replace(/\b\w/g, c => c.toUpperCase())
 }
 
+///////////////  formatación de fecha
+export const formatDate = (isoDate) => {
+    if (!isoDate) return "";
+    //   const date = new Date(isoDate);
+    //   const day = String(date.getDate()).padStart(2, "0");
+    //   const month = String(date.getMonth() + 1).padStart(2, "0");
+    //   const year = date.getFullYear();
+    //   return `${new Date(isoDate).toLocaleDateString()}`;
+    return isoDate.split("T")[0];
+};
+
+
 // export const hasEmptyRequired = (obj, fields) => fields.some(field => isEmptyValue(obj[field]));
 // Ej:
 /* const emptyField = hasEmptyRequired(addBuilding, [

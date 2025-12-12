@@ -67,4 +67,9 @@ input:hover {
 .renderActionsBTN{
     width: 6%;
 }
+
+.date-cell {
+  white-space: nowrap;
+  width: 1%;
+}
 /* End component table */

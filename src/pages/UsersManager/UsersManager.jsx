@@ -7,7 +7,8 @@ import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Swal from 'sweetalert2'
 import { CBotton, CInputBootstrap, CTableNormal } from '../../common/Componentes/Componentes'
-import { convierte } from '../../util/validation'
+import { convierte, formatDate } from '../../util/validation'
+import { Register } from '../Register/Register'
 
 export const UsersManager = () => {
     const navigate = useNavigate();
@@ -23,9 +24,11 @@ export const UsersManager = () => {
         date_born: "",
         gender: "",
         nationality: "",
-        special_situation: "",
-        phone: "",
         email: "",
+        type_document: "",
+        number_document: "",
+        phone: "",
+        special_situation: "",
         date_entry_apartment: "",
         building_id: "",
     })
@@ -35,11 +38,14 @@ export const UsersManager = () => {
         date_born: "",
         gender: "",
         nationality: "",
-        special_situation: "",
-        phone: "",
         email: "",
+        type_document: "",
+        number_document: "",
+        phone: "",
+        isActive: "",
+        special_situation: "",
         date_entry_apartment: "",
-        building_id: ""
+        building_id: "",
     })
 
     const [page, setPage] = useState(1);
@@ -85,12 +91,12 @@ export const UsersManager = () => {
     })
 
     //////////////////////     State for input
-    const handleInputChangeAdd = (e) => {
-        setAddUser(prevState => ({
-            ...prevState,
-            [e.target.name]: e.target.value
-        }))
-    }
+    /*  const handleInputChangeAdd = (e) => {
+         setAddUser(prevState => ({
+             ...prevState,
+             [e.target.name]: e.target.value
+         }))
+     } */
 
     //////////////////////     State for btn
     const handleInputChangeEdid = (e) => {
@@ -125,8 +131,18 @@ export const UsersManager = () => {
         const listarU = async () => {
             try {
                 const fetched = await users.rootListAllUsers(token)
-                if (fetched.data && Array.isArray(fetched.data)) {
-                    setListUsers(fetched.data)
+                if (Array.isArray(fetched.data)) {
+                    // setListUsers(fetched.data)
+
+                    const formatDataUser = fetched.data.map(user => ({
+                        ...user,
+                        date_born: formatDate(user.date_born),
+                        date_entry_apartment: formatDate(user.date_entry_apartment),
+                        last_login: formatDate(user.last_login)
+
+                    }))
+                    setListUsers(formatDataUser);
+
                 } else {
                     setListUsers([])
                     console.log("Los datos no son array")
@@ -256,13 +272,17 @@ export const UsersManager = () => {
         { header: "Last name", accessor: "lastName" },
         { header: "Email", accessor: "email" },
         { header: "Phone", accessor: "phone" },
-        { header: "Date born", accessor: "date_born" },
+        { header: "Date born", accessor: "date_born", type: "date" },
         { header: "Gender", accessor: "gender" },
         { header: "Nationality", accessor: "nationality" },
+        { header: "Type document", accessor: "type_document" },
+        { header: "Number document", accessor: "number_document" },
         { header: "Special situation", accessor: "special_situation" },
-        { header: "Date entry apartment", accessor: "date_entry_apartment" },
+        { header: "Date entry apartment", accessor: "date_entry_apartment", type: "date" },
+        { header: "isActive", accessor: "isActive" },
         { header: "Buiding", accessor: "building_id" },
         { header: "Role", accessor: "role_id" },
+        { header: "last Login", accessor: "last_login", type: "date" },
     ]
 
     return (
@@ -285,19 +305,7 @@ export const UsersManager = () => {
                             </div>
                             <div className="modal-body">
                                 <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-1">
-                                    {Object.keys(addUser).map((key, index) => (
-                                        <div className='col' key={index}>
-                                            <CInputBootstrap
-                                                label={convierte(key)}
-                                                type="text"
-                                                name={key}
-                                                placeholder=""
-                                                value={addUser[key]}
-                                                customClass="input-cardNormal-user"
-                                                changeEmit={handleInputChangeAdd}
-                                            />
-                                        </div>
-                                    ))}
+                                    <Register />
                                 </div>
                             </div>
                             <div className="modal-footer">

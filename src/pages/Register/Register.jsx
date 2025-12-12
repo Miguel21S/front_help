@@ -90,11 +90,11 @@ export const Register = () => {
                 }
 
                 const compareEmail = await users.rootCompareEmail(values.email);
-                if(compareEmail){
+                if (compareEmail) {
                     Swal.fire("Error", "Este correo ya está registrado.", "error")
                     return;
                 }
-                
+
                 const userRegister = await auth.rootRegister(values);
                 if (userRegister.success) {
                     setTimeout(() => {
@@ -120,6 +120,14 @@ export const Register = () => {
             <div className='designResister'>
                 <form className='formRegister' onSubmit={formik.handleSubmit}>
 
+                    {/* <label>Nombre</label>
+                    <input
+                        name="name"
+                        type="text"
+                        value={formik.values.name}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    /> */}
                     <label>Nombre</label>
                     <input
                         name="name"
@@ -127,6 +135,9 @@ export const Register = () => {
                         value={formik.values.name}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
+                        className="form-control"
+                        aria-label="Username"
+                        aria-describedby="basic-addon1"
                     />
                     {formik.touched.name && formik.errors.name && (
                         <p className="error">{formik.errors.name}</p>
