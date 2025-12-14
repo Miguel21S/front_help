@@ -17,6 +17,7 @@ export const DashboardSuperAdmin = () => {
     const [ageData, setAgeData] = useState([]);
     const [ageGroupData, setAgeGroupData] = useState([]);
     const [usersForRolData, setUsersForRolData] = useState([]);
+    const [usersIsActive, setUsersIsActive] = useState([]);
     const [usersAgeGenderData, setUsersAgeGenderData] = useState([]);
     const [usersNationalityData, setUsersNationalityData] = useState([]);
 
@@ -55,6 +56,7 @@ export const DashboardSuperAdmin = () => {
                 setAgeData(data.usersForAge);
                 setAgeGroupData(data.usersForAgeGroup);
                 setUsersForRolData(data.totalUsersForRol);
+                setUsersIsActive(data.userIsActive)
                 setUsersAgeGenderData(data.usersForAgeAndGenderGroup);
                 setUsersNationalityData(data.usersForNationality);
             } catch (error) {
@@ -105,6 +107,15 @@ export const DashboardSuperAdmin = () => {
                 backgroundColor: generateColors(ageData?.length || 0),
             }
         ]
+    }
+
+    const isActiveUsers = {
+        labels: usersIsActive?.map(item => item.active) || [],
+        datasets: [{
+            labels: 'Usuarios activos',
+            data: usersIsActive?.map(item => Number(item.count)) || [],
+            backgroundColor: generateColors(usersIsActive?.length || 0)
+        }]
     }
 
     //////////////////////     Users for roles
@@ -254,6 +265,15 @@ export const DashboardSuperAdmin = () => {
                             {/* Call users for age and genders in graphic */}
                             <div style={{ width: "300px" }}>
                                 <BarChartComponent data={AgeGenderDataChart} options={options} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-6 col-sm-4">
+                        <div className='card text-bg-dark mb-3' style={{ maxWidth: '22rem' }}>
+                            {/* Call users for age and genders in graphic */}
+                            <div style={{ width: "300px" }}>
+                                <BarChartComponent data={isActiveUsers} />
                             </div>
                         </div>
                     </div>

@@ -1,13 +1,13 @@
 import { useSelector } from 'react-redux'
 import './UsersManager.css'
 import { useEffect, useState } from 'react'
-import { users } from '../../services/root'
+import { reports, users } from '../../services/root'
 import { userData } from '../../app/slices/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import Swal from 'sweetalert2'
 import { CBotton, CInputBootstrap, CTableNormal } from '../../common/Componentes/Componentes'
-import { convierte, formatDate } from '../../util/validation'
+import { convierte, formatDate, userIsActive } from '../../util/validation'
 import { Register } from '../Register/Register'
 
 export const UsersManager = () => {
@@ -112,7 +112,6 @@ export const UsersManager = () => {
     //////////////////////     State for button in table
     const handleEditBtnTable = (rowId) => {
         setEditUser(rowId);
-
         const selectUser = listUsers.find(i => i.id === rowId)
         setEditedData(prevState => ({
             ...prevState,
@@ -138,8 +137,7 @@ export const UsersManager = () => {
                         ...user,
                         date_born: formatDate(user.date_born),
                         date_entry_apartment: formatDate(user.date_entry_apartment),
-                        last_login: formatDate(user.last_login)
-
+                        last_login: formatDate(user.last_login),
                     }))
                     setListUsers(formatDataUser);
 
@@ -254,6 +252,24 @@ export const UsersManager = () => {
         }
     }
 
+    //////////////////////     Generete PDF users
+    const usersPDF = async () => {
+        try {
+            const datosPDF = await reports.rootGetReportUsers(token)
+            const url = window.URL.createObjectURL(datosPDF);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "usersInfo.pdf";
+            document.body.appendChild(a);
+            a.click();
+
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.log(error.message || "Error en generar PDF")
+        }
+    }
+
     //////////////////////     Pagination
     const paginatedData = listUsers.slice(
         (page - 1) * rowsPage,
@@ -279,7 +295,7 @@ export const UsersManager = () => {
         { header: "Number document", accessor: "number_document" },
         { header: "Special situation", accessor: "special_situation" },
         { header: "Date entry apartment", accessor: "date_entry_apartment", type: "date" },
-        { header: "isActive", accessor: "isActive" },
+        { header: "isActive", accessor: "isActive", render: row => userIsActive(row.isActive) },
         { header: "Buiding", accessor: "building_id" },
         { header: "Role", accessor: "role_id" },
         { header: "last Login", accessor: "last_login", type: "date" },
@@ -294,61 +310,14 @@ export const UsersManager = () => {
                         <div className="marge-icon-btn-user" style={{ margin: "8px" }}> Adicionar edificio </div>
                     </span>}user
                 </button>
-                {/* Modal Add */}
-                <div className="modal fade" id="openModalUsergManager" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
-                        <div className="modal-content">
-                            <div className="modal-header ">
-                                <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-1">
-                                    <Register />
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary" onClick={UpdateUser}>Guardar</button>
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Modal Update */}
-                <div className="modal fade" id="modalEditBuild" data-bs-backdrop="static" data-bs-keyboard="false"
-                    tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                    <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
-                        <div className="modal-content">
-                            <div className="modal-header ">
-                                <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
-                            </div>
-                            <div className="modal-body">
-                                <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-1">
-                                    {Object.entries(addUser).map(([key], index) => (
-                                        <div className='col' key={index}>
-                                            <CInputBootstrap
-                                                label={convierte(key)}
-                                                type="text"
-                                                name={key}
-                                                placeholder=""
-                                                value={editedData[editUser]?.[key] || ""}
-                                                customClass="input-cardNormal-user"
-                                                changeEmit={handleInputChangeEdid}
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary" onClick={UpdateUser}>Guardar</button>
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <CBotton
+                    label={"PDF"}
+                    type='button'
+                    onClick={usersPDF}
+                    customClass={""}
+
+                />
 
                 <CTableNormal columns={columns}
                     data={paginatedData}
@@ -429,6 +398,62 @@ export const UsersManager = () => {
                             </li>
                         </ul>
                     </nav>
+                </div>
+
+                {/* Modal Add */}
+                <div className="modal fade" id="openModalUsergManager" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
+                        <div className="modal-content">
+                            <div className="modal-header ">
+                                <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-1">
+                                    <Register />
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-primary" onClick={UpdateUser}>Guardar</button>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Modal Update */}
+                <div className="modal fade" id="modalEditBuild" data-bs-backdrop="static" data-bs-keyboard="false"
+                    tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div className="modal-dialog" style={{ maxWidth: '900px', width: '100%' }}>
+                        <div className="modal-content">
+                            <div className="modal-header ">
+                                <h1 className="modal-title fs-5" id="staticBackdropLabel">Actualizar Edificio</h1>
+                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleCancelEditTable}></button>
+                            </div>
+                            <div className="modal-body">
+                                <div className="row row-cols-1 row-cols-md-2 row-cols-xl-2 g-1">
+                                    {Object.entries(addUser).map(([key], index) => (
+                                        <div className='col' key={index}>
+                                            <CInputBootstrap
+                                                label={convierte(key)}
+                                                type="text"
+                                                name={key}
+                                                placeholder=""
+                                                value={editedData[editUser]?.[key] || ""}
+                                                customClass="input-cardNormal-user"
+                                                changeEmit={handleInputChangeEdid}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-primary" onClick={UpdateUser}>Guardar</button>
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleCancelEditTable}>Close</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

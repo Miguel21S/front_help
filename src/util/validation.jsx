@@ -57,7 +57,15 @@ export const formatDate = (isoDate) => {
     return isoDate.split("T")[0];
 };
 
-
+///////////////  
+export const userIsActive = (value) => {
+    // let active = isActive ? "Activo" : "Inactivo"
+    return (
+        <div style={{ color: value ? "green" : "red" }}>
+            {value ? "Activo" : "Inactivo"}
+        </div>
+    )
+}
 // export const hasEmptyRequired = (obj, fields) => fields.some(field => isEmptyValue(obj[field]));
 // Ej:
 /* const emptyField = hasEmptyRequired(addBuilding, [
